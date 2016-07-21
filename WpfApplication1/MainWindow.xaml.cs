@@ -42,15 +42,13 @@ namespace WpfApplication1
             this.grid1.Children.Add(host);
 
             //////////////////////////////LOGIN COMMUNICATION///////////////////////////////
-            //creating OpenAPI instance
-            long Result;
+            checkLoginComm(axKHOA.CommConnect());
 
-            Result = axKHOA.CommConnect();
-
+        }
+        private void checkLoginComm(long Result)
+        {
             if (Result != 0)
                 MessageBox.Show("Login창 열림 Fail");
-            else
-                MessageBox.Show("로그인 성공!");
         }
     }
 }
