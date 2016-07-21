@@ -20,9 +20,11 @@ namespace WpfApplication1
     /// </summary>
     public partial class MainWindow : Window
     {
+        string _Result = null;
         public MainWindow()
         {
             InitializeComponent();
+            input.Focus();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -51,6 +53,20 @@ namespace WpfApplication1
                 MessageBox.Show("Login창 열림 Fail");
             else
                 MessageBox.Show("로그인 성공!");
+        }
+        public string Open(string displayMessage)
+        {
+            Display.Text = displayMessage;
+            this.ShowDialog();
+            return _Result;
+        }
+        private void input_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key==Key.Enter)
+            {
+                _Result = input.Text;
+                this.Close();
+            }
         }
     }
 }

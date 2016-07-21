@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
     <Grid Name="grid1" Margin="0,0,0,294">
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="299" Width="497"/>
+        <TextBlock  Grid.Row="0" TextWrapping="Wrap" Name="Display"/>
+        <TextBox BorderBrush="{x:Null}" Grid.Row="1" Background="Black" Foreground="White" Name="input" KeyDown="input_KeyDown"/>
 
     </Grid>
 </Window>
