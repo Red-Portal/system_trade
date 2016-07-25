@@ -30,3 +30,6 @@ D:\Documents\Visual Studio 2015\Projects\SystemTrade\WpfApplication1\obj\Debug\M
 D:\Documents\Visual Studio 2015\Projects\SystemTrade\WpfApplication1\obj\Debug\WpfApplication1.g.resources
 D:\Documents\Visual Studio 2015\Projects\SystemTrade\WpfApplication1\obj\Debug\WpfApplication1.Properties.Resources.resources
 D:\Documents\Visual Studio 2015\Projects\SystemTrade\WpfApplication1\obj\Debug\SystemTrade.csproj.GenerateResource.Cache
+D:\Documents\GitHub\system_trade\WpfApplication1\bin\Debug\WpfApplication1.exe.config
+D:\Documents\GitHub\system_trade\WpfApplication1\obj\Debug\WpfApplication1.exe
+D:\Documents\GitHub\system_trade\WpfApplication1\obj\Debug\WpfApplication1.pdb
