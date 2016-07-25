@@ -114,21 +114,27 @@ namespace WpfApplication1
             if (null != PropertyChanged)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private class commands
+        public void searchCommand(string input)/////////command search engine/////////////
+        {//////////////////////////////must add the command here in order to be searched//
+            if (ConsoleInput == "login")
+                commands.LoginComm();
+        }
+        private class commands //////////////////////List of commands///////////////////////
         {
-            public static void LoginComm() //Login Request communication with the hts.
+            public void LoginComm() //Login Request communication with the hts.
             {
                 long Result;
                 Result = _axKHOA.CommConnect();
                 if (Result != 0)
                     MessageBox.Show("Login창 열림 Fail");
+                else
+                {
+                    while(_axKHOA.GetLoginInfo("USER_ID")!="msca8h")
+                    {
+                        ConsoleOutput.Add("waiting for userinfo....");
+                    }
+                }
             }
-        }
-        public void searchCommand(string input)
-        {
-            if (ConsoleInput == "login")
-                commands.LoginComm();
         }
     }
 }
