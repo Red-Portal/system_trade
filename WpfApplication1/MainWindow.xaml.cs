@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,13 +20,17 @@ namespace WpfApplication1
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
     /// </summary>
+    /// 
     public partial class MainWindow : Window
     {
-        string _Result = null;
+        ConsoleContent dc = new ConsoleContent();
+        // Make a OpenAPI instance, couldn't find how to make this global. had to make it public
+        private static AxKHOpenAPILib.AxKHOpenAPI axKHOA = new AxKHOpenAPILib.AxKHOpenAPI();
         public MainWindow()
         {
             InitializeComponent();
-            input.Focus();
+            DataContext = dc;
+            Loaded += Window_Loaded;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -33,9 +39,6 @@ namespace WpfApplication1
             System.Windows.Forms.Integration.WindowsFormsHost host =
                 new System.Windows.Forms.Integration.WindowsFormsHost();
 
-            // Create the ActiveX control.
-            AxKHOpenAPILib.AxKHOpenAPI axKHOA = new AxKHOpenAPILib.AxKHOpenAPI();
-
             // Assign the ActiveX control as the host control's child.
             host.Child = axKHOA;
 
@@ -43,28 +46,89 @@ namespace WpfApplication1
             // control's collection of child controls.
             this.grid1.Children.Add(host);
 
-            //////////////////////////////LOGIN COMMUNICATION///////////////////////////////
-            checkLoginComm(axKHOA.CommConnect());
-
+            InputBlock.KeyDown += InputBlock_KeyDown;
+            InputBlock.Focus();
         }
-        private void checkLoginComm(long Result)
+        void InputBlock_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Result != 0)
-                MessageBox.Show("Login창 열림 Fail");
-        }
-        public string Open(string displayMessage)
-        {
-            Display.Text = displayMessage;
-            this.ShowDialog();
-            return _Result;
-        }
-        private void input_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.Key==Key.Enter)
+            if (e.Key == Key.Enter)
             {
-                _Result = input.Text;
-                this.Close();
+                dc.ConsoleInput = InputBlock.Text;
+                dc.RunCommand();
+                InputBlock.Focus();
+                Scroller.ScrollToBottom();
             }
+        }
+        public static AxKHOpenAPILib.AxKHOpenAPI getKHOA()
+        {
+            return axKHOA;
+        }
+    }
+    public class ConsoleContent : INotifyPropertyChanged
+    {
+        string consoleInput = string.Empty;
+        ObservableCollection<string> consoleOutput = new ObservableCollection<string>()
+            {"To start program, enter <login> and login to your Kiwoom account" };
+
+        //fetching OpenAPI from MainWindow. As I said, couldn't find a way to pass it otherwise
+        private static AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
+
+        public string ConsoleInput
+        {
+            get
+            {
+                return consoleInput;
+            }
+            set
+            {
+                consoleInput = value;
+                OnPropertyChanged("ConsoleInput");
+            }
+        }
+
+        public ObservableCollection<string> ConsoleOutput
+        {
+            get
+            {
+                return consoleOutput;
+            }
+            set
+            {
+                consoleOutput = value;
+                OnPropertyChanged("ConsoleOutput");
+            }
+        }
+
+        public void RunCommand()
+        {
+            ConsoleOutput.Add(ConsoleInput);
+
+            // do your stuff here.
+            searchCommand(ConsoleInput);
+            ConsoleInput = String.Empty;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        void OnPropertyChanged(string propertyName)
+        {
+            if (null != PropertyChanged)
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private class commands
+        {
+            public static void LoginComm() //Login Request communication with the hts.
+            {
+                long Result;
+                Result = _axKHOA.CommConnect();
+                if (Result != 0)
+                    MessageBox.Show("Login창 열림 Fail");
+            }
+        }
+        public void searchCommand(string input)
+        {
+            if (ConsoleInput == "login")
+                commands.LoginComm();
         }
     }
 }

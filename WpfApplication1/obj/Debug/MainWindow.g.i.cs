@@ -30,10 +30,10 @@ using System.Windows.Media.TextFormatting;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Shell;
-using WpfApplication1;
+using systematicalStockTrade;
 
 
-namespace WpfApplication1 {
+namespace systematicalStockTrade {
     
     
     /// <summary>
@@ -52,15 +52,15 @@ namespace WpfApplication1 {
         
         #line 10 "..\..\MainWindow.xaml"
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-        internal System.Windows.Controls.TextBlock Display;
+        internal System.Windows.Controls.ScrollViewer Scroller;
         
         #line default
         #line hidden
         
         
-        #line 11 "..\..\MainWindow.xaml"
+        #line 19 "..\..\MainWindow.xaml"
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
-        internal System.Windows.Controls.TextBox input;
+        internal System.Windows.Controls.TextBox InputBlock;
         
         #line default
         #line hidden
@@ -98,7 +98,7 @@ namespace WpfApplication1 {
             case 1:
             
             #line 8 "..\..\MainWindow.xaml"
-            ((WpfApplication1.MainWindow)(target)).Loaded += new System.Windows.RoutedEventHandler(this.Window_Loaded);
+            ((systematicalStockTrade.MainWindow)(target)).Loaded += new System.Windows.RoutedEventHandler(this.Window_Loaded);
             
             #line default
             #line hidden
@@ -107,16 +107,10 @@ namespace WpfApplication1 {
             this.grid1 = ((System.Windows.Controls.Grid)(target));
             return;
             case 3:
-            this.Display = ((System.Windows.Controls.TextBlock)(target));
+            this.Scroller = ((System.Windows.Controls.ScrollViewer)(target));
             return;
             case 4:
-            this.input = ((System.Windows.Controls.TextBox)(target));
-            
-            #line 11 "..\..\MainWindow.xaml"
-            this.input.KeyDown += new System.Windows.Input.KeyEventHandler(this.input_KeyDown);
-            
-            #line default
-            #line hidden
+            this.InputBlock = ((System.Windows.Controls.TextBox)(target));
             return;
             }
             this._contentLoaded = true;
