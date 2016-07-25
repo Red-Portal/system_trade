@@ -1,13 +1,13 @@
-﻿<Window x:Class="WpfApplication1.MainWindow"
+﻿<Window x:Class="systematicalStockTrade.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApplication1"
+        xmlns:local="clr-namespace:systematicalStockTrade"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
     <Grid Name="grid1" Margin="0,0,0,294">
-        <ScrollViewer Name="Scroller" Margin="0,0,0,-1312" Background="CadetBlue">
+        <ScrollViewer Name="Scroller" Margin="0,0,0,-294" Background="CadetBlue">
             <StackPanel>
                 <ItemsControl ItemsSource="{Binding ConsoleOutput, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>

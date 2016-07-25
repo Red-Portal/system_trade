@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApplication1
+namespace systematicalStockTrade
 {
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
@@ -25,7 +25,7 @@ namespace WpfApplication1
     {
         ConsoleContent dc = new ConsoleContent();
         // Make a OpenAPI instance, couldn't find how to make this global. had to make it public
-        public static AxKHOpenAPILib.AxKHOpenAPI axKHOA = new AxKHOpenAPILib.AxKHOpenAPI();
+        private static AxKHOpenAPILib.AxKHOpenAPI axKHOA = new AxKHOpenAPILib.AxKHOpenAPI();
         public MainWindow()
         {
             InitializeComponent();
@@ -34,7 +34,7 @@ namespace WpfApplication1
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        { 
+        {
             // Create the interop host control.
             System.Windows.Forms.Integration.WindowsFormsHost host =
                 new System.Windows.Forms.Integration.WindowsFormsHost();
@@ -51,7 +51,7 @@ namespace WpfApplication1
         }
         void InputBlock_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key==Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 dc.ConsoleInput = InputBlock.Text;
                 dc.RunCommand();
@@ -59,15 +59,19 @@ namespace WpfApplication1
                 Scroller.ScrollToBottom();
             }
         }
+        public static AxKHOpenAPILib.AxKHOpenAPI getKHOA()
+        {
+            return axKHOA;
+        }
     }
-    public class ConsoleContent:INotifyPropertyChanged
+    public class ConsoleContent : INotifyPropertyChanged
     {
         string consoleInput = string.Empty;
         ObservableCollection<string> consoleOutput = new ObservableCollection<string>()
             {"To start program, enter <login> and login to your Kiwoom account" };
 
         //fetching OpenAPI from MainWindow. As I said, couldn't find a way to pass it otherwise
-        private static AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.axKHOA;
+        private static AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
 
         public string ConsoleInput
         {
@@ -100,10 +104,7 @@ namespace WpfApplication1
             ConsoleOutput.Add(ConsoleInput);
 
             // do your stuff here.
-            if(ConsoleInput=="login")
-            {
-                checkLoginComm();
-            }
+            searchCommand(ConsoleInput);
             ConsoleInput = String.Empty;
         }
 
@@ -113,12 +114,21 @@ namespace WpfApplication1
             if (null != PropertyChanged)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-        private void checkLoginComm() //Login Request communication with the hts.
+
+        private class commands
         {
-            long Result;
-            Result = _axKHOA.CommConnect();
-            if (Result != 0)
-                MessageBox.Show("Login창 열림 Fail");
+            public static void LoginComm() //Login Request communication with the hts.
+            {
+                long Result;
+                Result = _axKHOA.CommConnect();
+                if (Result != 0)
+                    MessageBox.Show("Login창 열림 Fail");
+            }
+        }
+        public void searchCommand(string input)
+        {
+            if (ConsoleInput == "login")
+                commands.LoginComm();
         }
     }
 }
