@@ -23,8 +23,7 @@ namespace WpfApplication1
     /// 
     public partial class MainWindow : Window
     {
-        ConsoleContent dc = new ConsoleContent();
-        // Make a OpenAPI instance, couldn't find how to make this global. had to make it public
+        private static ConsoleContent dc = new ConsoleContent();
         private static AxKHOpenAPILib.AxKHOpenAPI axKHOA = new AxKHOpenAPILib.AxKHOpenAPI();
         public MainWindow()
         {
@@ -59,9 +58,17 @@ namespace WpfApplication1
                 Scroller.ScrollToBottom();
             }
         }
+        /// <summary>
+        /// getKHOA is a method to reference axKHOA without messing up anything else
+        /// </summary>
+        /// <returns></returns>
         public static AxKHOpenAPILib.AxKHOpenAPI getKHOA()
         {
             return axKHOA;
+        }
+        public static ConsoleContent getDc()
+        {
+            return dc;
         }
     }
     public class ConsoleContent : INotifyPropertyChanged
@@ -69,9 +76,6 @@ namespace WpfApplication1
         string consoleInput = string.Empty;
         ObservableCollection<string> consoleOutput = new ObservableCollection<string>()
             {"To start program, enter <login> and login to your Kiwoom account" };
-
-        //fetching OpenAPI from MainWindow. As I said, couldn't find a way to pass it otherwise
-        private static AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
 
         public string ConsoleInput
         {
@@ -116,25 +120,36 @@ namespace WpfApplication1
         }
         public void searchCommand(string input)/////////command search engine/////////////
         {//////////////////////////////must add the command here in order to be searched//
+            commands command=new commands();
+
             if (ConsoleInput == "login")
-                commands.LoginComm();
+                command.LoginComm();
         }
-        private class commands //////////////////////List of commands///////////////////////
+    }
+    public class commands //////////////////////List of commands///////////////////////
+    {
+        //fetching OpenAPI instance, console instance from MainWindow
+        private AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
+        private ConsoleContent _dc = MainWindow.getDc();
+
+        /// <summary>
+        /// ///////////////////////////////////////////////////////
+        /// </summary>
+        //TODO: add command history or log something like that
+        public void LoginComm() //Login Request communication with the hts.
         {
-            public void LoginComm() //Login Request communication with the hts.
-            {
-                long Result;
-                Result = _axKHOA.CommConnect();
-                if (Result != 0)
-                    MessageBox.Show("Login창 열림 Fail");
-                else
-                {
-                    while(_axKHOA.GetLoginInfo("USER_ID")!="msca8h")
-                    {
-                        ConsoleOutput.Add("waiting for userinfo....");
-                    }
-                }
-            }
+            long Result;
+            Result = _axKHOA.CommConnect();
+            if (Result != 0)
+                MessageBox.Show("Login창 열림 Fail");
+            outputHandler("waiting for login result....");
+
+            ///TODO: onEventConnect() 를 구현할것
+            
+        }
+        private void outputHandler(string request)
+        {
+            _dc.ConsoleOutput.Add(request);
         }
     }
 }
