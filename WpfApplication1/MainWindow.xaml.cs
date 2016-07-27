@@ -75,8 +75,7 @@ namespace WpfApplication1
     {
         string consoleInput = string.Empty;
         ObservableCollection<string> consoleOutput = new ObservableCollection<string>()
-            {"To start program, enter <login> and login to your Kiwoom account" };
-
+            {constants.START};
         public string ConsoleInput
         {
             get
@@ -106,7 +105,6 @@ namespace WpfApplication1
         public void RunCommand()
         {
             ConsoleOutput.Add(ConsoleInput);
-
             // do your stuff here.
             searchCommand(ConsoleInput);
             ConsoleInput = String.Empty;
@@ -157,6 +155,8 @@ namespace WpfApplication1
             else
             {
                 outputHandler("login successful! Welcome to");
+                outputHandler("");
+
             }
 
         }
@@ -166,4 +166,9 @@ namespace WpfApplication1
         }
         //
     }
+}
+static class constants
+{
+    public static string VERSION="1.1.1 pre-Alpha";
+    public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
 }
