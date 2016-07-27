@@ -118,12 +118,14 @@ namespace WpfApplication1
         }
 
 
-        public void searchCommand(string input)/////////command search engine/////////////
-        {//////////////////////////////must add the command here in order to be searched//
+        public void searchCommand(string input)/////////command search engine////////////////
+        {//////////////////////////////must add the command here in order to be operational//
             commands command=new commands();
 
             if (ConsoleInput == "login")
                 command.commandLoginComm();
+            if (ConsoleInput == "userinfo")
+                command.commandUserInfo();
         }
     }
     public class commands //////////////////////List of commands///////////////////////
@@ -131,11 +133,12 @@ namespace WpfApplication1
         //fetching OpenAPI instance, console instance from MainWindow
         private AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
         private ConsoleContent _dc = MainWindow.getDc();
+        private bool loginState = false;
 
         /// <summary>
         /// ///////////////////////////////////////////////////////
         /// </summary>
-        //TODO: add command history or log something like that
+        
         public void commandLoginComm() //Login Request communication with the hts.
         {
             long Result;
@@ -145,20 +148,55 @@ namespace WpfApplication1
             outputHandler("waiting for login");
             _axKHOA.OnEventConnect += new AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEventHandler(eventLogin);
         }
+        public void commandUserInfo()
+        {
+            if (!loginState)
+                outputHandler("please login first");
+            else
+            {
+                outputHandler("User ID: " + _axKHOA.GetLoginInfo("USER_ID"));
+                outputHandler("User name: " + _axKHOA.GetLoginInfo("USER_NAME"));
+                outputHandler("Accounts: " + _axKHOA.GetLoginInfo("ACCNO"));
+                switch (_axKHOA.GetLoginInfo("KEY_BSECGB"))
+                {
+                    case "0":
+                        outputHandler("keyboard safety is ON");
+                        break;
+                    case "1":
+                        outputHandler("keyboard safety is OFF");
+                        break;
+                }
+                switch (_axKHOA.GetLoginInfo("FIREW_SECGB"))
+                {
+                    case "0":
+                        outputHandler("firewall is not configurated");
+                        break;
+                    case "1":
+                        outputHandler("firewall is ON");
+                        break;
+                    case "2":
+                        outputHandler("firewall is OFF");
+                        break;
+                }
+            }
+        }
+
 
         // Non command methods
         public void eventLogin(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEvent e)
         {
 
             if (e.nErrCode != 0)
+            {
                 outputHandler("failed to login.... please try again.");
+                loginState = false;
+            }
             else
             {
-                outputHandler("login successful! Welcome to");
-                outputHandler("");
-
+                outputHandler("login successful! Welcome " + _axKHOA.GetLoginInfo("USER_NAME") + "!");
+                loginState = true;
+                commandUserInfo();
             }
-
         }
         private void outputHandler(string request)
         {
@@ -172,3 +210,8 @@ static class constants
     public static string VERSION="1.1.1 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
 }
+
+
+
+//TODO: add command history or log something like that
+// fix the userinfo thing. It doesn't get the flag 'login state'
