@@ -118,12 +118,14 @@ namespace WpfApplication1
             if (null != PropertyChanged)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
         public void searchCommand(string input)/////////command search engine/////////////
         {//////////////////////////////must add the command here in order to be searched//
             commands command=new commands();
 
             if (ConsoleInput == "login")
-                command.LoginComm();
+                command.commandLoginComm();
         }
     }
     public class commands //////////////////////List of commands///////////////////////
@@ -136,20 +138,32 @@ namespace WpfApplication1
         /// ///////////////////////////////////////////////////////
         /// </summary>
         //TODO: add command history or log something like that
-        public void LoginComm() //Login Request communication with the hts.
+        public void commandLoginComm() //Login Request communication with the hts.
         {
             long Result;
             Result = _axKHOA.CommConnect();
             if (Result != 0)
                 MessageBox.Show("Login창 열림 Fail");
-            outputHandler("waiting for login result....");
+            outputHandler("waiting for login");
+            _axKHOA.OnEventConnect += new AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEventHandler(eventLogin);
+        }
 
-            ///TODO: onEventConnect() 를 구현할것
-            
+        // Non command methods
+        public void eventLogin(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEvent e)
+        {
+
+            if (e.nErrCode != 0)
+                outputHandler("failed to login.... please try again.");
+            else
+            {
+                outputHandler("login successful! Welcome to");
+            }
+
         }
         private void outputHandler(string request)
         {
             _dc.ConsoleOutput.Add(request);
         }
+        //
     }
 }
