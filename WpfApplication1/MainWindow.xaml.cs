@@ -104,7 +104,12 @@ namespace WpfApplication1
 
         public void RunCommand()
         {
-            ConsoleOutput.Add(ConsoleInput);
+            if (ConsoleInput != "\n")
+                ;
+            else
+                ConsoleOutput.Add("$" + ConsoleInput);
+
+
             // do your stuff here.
             searchCommand(ConsoleInput);
             ConsoleInput = String.Empty;
@@ -126,6 +131,8 @@ namespace WpfApplication1
                 command.commandLoginComm();
             if (ConsoleInput == "userinfo")
                 command.commandUserInfo();
+            if (ConsoleInput == "connection")
+                command.commandConnectionState();
         }
     }
     public class commands //////////////////////List of commands///////////////////////
@@ -133,7 +140,6 @@ namespace WpfApplication1
         //fetching OpenAPI instance, console instance from MainWindow
         private AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
         private ConsoleContent _dc = MainWindow.getDc();
-        private bool loginState = false;
 
         /// <summary>
         /// ///////////////////////////////////////////////////////
@@ -150,7 +156,7 @@ namespace WpfApplication1
         }
         public void commandUserInfo()
         {
-            if (!loginState)
+            if (_axKHOA.GetConnectState()==0)
                 outputHandler("please login first");
             else
             {
@@ -180,6 +186,23 @@ namespace WpfApplication1
                 }
             }
         }
+        public void commandConnectionState()
+        {
+            switch (_axKHOA.GetConnectState())
+            {
+                case 0:
+                    outputHandler("You are NOT connected");
+                    break;
+                case 1:
+                    outputHandler("You are CONNECTED");
+                    break;
+            }
+        }
+        public void commandProduct()
+        {
+            outputHandler("which product would you like to know?");
+
+        }
 
 
         // Non command methods
@@ -189,12 +212,14 @@ namespace WpfApplication1
             if (e.nErrCode != 0)
             {
                 outputHandler("failed to login.... please try again.");
-                loginState = false;
             }
             else
             {
                 outputHandler("login successful! Welcome " + _axKHOA.GetLoginInfo("USER_NAME") + "!");
-                loginState = true;
+                if (_axKHOA.GetConnectState() == 0)
+                    outputHandler("Connection state: not connected");
+                else if (_axKHOA.GetConnectState() == 1)
+                    outputHandler("Connection state: connected");
                 commandUserInfo();
             }
         }
@@ -207,7 +232,7 @@ namespace WpfApplication1
 }
 static class constants
 {
-    public static string VERSION="1.1.1 pre-Alpha";
+    public static string VERSION="1.2.1 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
 }
 
