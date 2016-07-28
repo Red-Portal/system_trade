@@ -111,7 +111,6 @@ namespace WpfApplication1
             searchCommand(ConsoleInput);
             ConsoleInput = String.Empty;
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string propertyName)
         {
@@ -130,12 +129,14 @@ namespace WpfApplication1
                 command.commandUserInfo();
             else if (ConsoleInput == "connection")
                 command.commandConnectionState();
+            else if (ConsoleInput == "product")
+                command.commandProduct();
         }
     }
 }
 static class constants
 {
-    public static string VERSION="1.2.1 pre-Alpha";
+    public static string VERSION="1.4.1 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
 }
 
