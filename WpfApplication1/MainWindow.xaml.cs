@@ -105,10 +105,7 @@ namespace WpfApplication1
         public void RunCommand()
         {
             if (ConsoleInput != "\n")
-                ;
-            else
                 ConsoleOutput.Add("$" + ConsoleInput);
-
 
             // do your stuff here.
             searchCommand(ConsoleInput);
@@ -125,109 +122,15 @@ namespace WpfApplication1
 
         public void searchCommand(string input)/////////command search engine////////////////
         {//////////////////////////////must add the command here in order to be operational//
-            commands command=new commands();
+            commands command = new commands();
 
             if (ConsoleInput == "login")
                 command.commandLoginComm();
-            if (ConsoleInput == "userinfo")
+            else if (ConsoleInput == "userinfo")
                 command.commandUserInfo();
-            if (ConsoleInput == "connection")
+            else if (ConsoleInput == "connection")
                 command.commandConnectionState();
         }
-    }
-    public class commands //////////////////////List of commands///////////////////////
-    {
-        //fetching OpenAPI instance, console instance from MainWindow
-        private AxKHOpenAPILib.AxKHOpenAPI _axKHOA = MainWindow.getKHOA();
-        private ConsoleContent _dc = MainWindow.getDc();
-
-        /// <summary>
-        /// ///////////////////////////////////////////////////////
-        /// </summary>
-        
-        public void commandLoginComm() //Login Request communication with the hts.
-        {
-            long Result;
-            Result = _axKHOA.CommConnect();
-            if (Result != 0)
-                MessageBox.Show("Login창 열림 Fail");
-            outputHandler("waiting for login");
-            _axKHOA.OnEventConnect += new AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEventHandler(eventLogin);
-        }
-        public void commandUserInfo()
-        {
-            if (_axKHOA.GetConnectState()==0)
-                outputHandler("please login first");
-            else
-            {
-                outputHandler("User ID: " + _axKHOA.GetLoginInfo("USER_ID"));
-                outputHandler("User name: " + _axKHOA.GetLoginInfo("USER_NAME"));
-                outputHandler("Accounts: " + _axKHOA.GetLoginInfo("ACCNO"));
-                switch (_axKHOA.GetLoginInfo("KEY_BSECGB"))
-                {
-                    case "0":
-                        outputHandler("keyboard safety is ON");
-                        break;
-                    case "1":
-                        outputHandler("keyboard safety is OFF");
-                        break;
-                }
-                switch (_axKHOA.GetLoginInfo("FIREW_SECGB"))
-                {
-                    case "0":
-                        outputHandler("firewall is not configurated");
-                        break;
-                    case "1":
-                        outputHandler("firewall is ON");
-                        break;
-                    case "2":
-                        outputHandler("firewall is OFF");
-                        break;
-                }
-            }
-        }
-        public void commandConnectionState()
-        {
-            switch (_axKHOA.GetConnectState())
-            {
-                case 0:
-                    outputHandler("You are NOT connected");
-                    break;
-                case 1:
-                    outputHandler("You are CONNECTED");
-                    break;
-            }
-        }
-        public void commandProduct()
-        {
-            outputHandler("which product would you like to know?");
-
-        }
-
-
-        // Non command methods
-        public void eventLogin(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEvent e)
-        {
-
-            if (e.nErrCode != 0)
-            {
-                outputHandler("failed to login.... please try again.");
-            }
-            else
-            {
-                outputHandler("login successful! Welcome " + _axKHOA.GetLoginInfo("USER_NAME") + "!");
-                if (_axKHOA.GetConnectState() == 0)
-                    outputHandler("Connection state: not connected");
-                else if (_axKHOA.GetConnectState() == 1)
-                    outputHandler("Connection state: connected");
-                commandUserInfo();
-            }
-        }
-        private void outputHandler(string request)
-        {
-            _dc.ConsoleOutput.Add(request);
-        }
-        //
     }
 }
 static class constants
@@ -238,5 +141,3 @@ static class constants
 
 
 
-//TODO: add command history or log something like that
-// fix the userinfo thing. It doesn't get the flag 'login state'
