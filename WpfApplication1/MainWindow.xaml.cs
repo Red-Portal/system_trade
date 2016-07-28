@@ -123,21 +123,30 @@ namespace WpfApplication1
         {//////////////////////////////must add the command here in order to be operational//
             commands command = new commands();
 
-            if (ConsoleInput == "login")
-                command.commandLoginComm();
-            else if (ConsoleInput == "userinfo")
-                command.commandUserInfo();
-            else if (ConsoleInput == "connection")
-                command.commandConnectionState();
-            else if (ConsoleInput == "product")
-                command.commandProduct();
+            switch (ConsoleInput)
+            {
+                case ("login"):
+                    command.commandLoginComm();
+                    break;
+                case ("userinfo"):
+                    command.commandUserInfo();
+                    break;
+                case ("connection"):
+                    command.commandConnectionState();
+                    break;
+                case ("product"):
+                    command.commandProduct();
+                    break;
+                default: break;
+            }
         }
     }
 }
 static class constants
 {
-    public static string VERSION="1.4.2 pre-Alpha";
+    public static string VERSION="1.4.3 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
+    public static string UNCONNECTED = "You are not connected. Please login or check your connection";
 }
 
 
