@@ -126,17 +126,21 @@ namespace WpfApplication1
             switch (ConsoleInput)
             {
                 case ("login"):
-                    command.commandLoginComm();
+                    command.commandLoginComm(); // Request communication with Kiwoom HTS by logging in
                     break;
                 case ("userinfo"):
-                    command.commandUserInfo();
+                    command.commandUserInfo(); // Show info of logged user
                     break;
                 case ("connection"):
-                    command.commandConnectionState();
+                    command.commandConnectionState(); // Show connection state
                     break;
-                case ("product"):
-                    command.commandProduct();
+                case ("searchproduct"):
+                    command.commandStartSearch(); // perform a product search using KNN algorithm
                     break;
+                case ("trade"):
+                    command.commandTrade();
+                    break;
+
                 default: break;
             }
         }
@@ -144,7 +148,7 @@ namespace WpfApplication1
 }
 static class constants
 {
-    public static string VERSION="1.4.3 pre-Alpha";
+    public static string VERSION="2.0.1 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
     public static string UNCONNECTED = "You are not connected. Please login or check your connection";
 }
