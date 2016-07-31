@@ -148,7 +148,7 @@ namespace WpfApplication1
 }
 static class constants
 {
-    public static string VERSION="2.0.1 pre-Alpha";
+    public static string VERSION="2.1.1 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
     public static string UNCONNECTED = "You are not connected. Please login or check your connection";
 }
