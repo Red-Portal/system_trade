@@ -134,11 +134,14 @@ namespace WpfApplication1
                 case ("connection"):
                     command.commandConnectionState(); // Show connection state
                     break;
-                case ("searchproduct"):
+                case ("search"):
                     command.commandStartSearch(); // perform a product search using KNN algorithm
                     break;
                 case ("trade"):
                     command.commandTrade();
+                    break;
+                case ("help"):
+                    command.commandHelp();
                     break;
 
                 default: break;
@@ -148,9 +151,10 @@ namespace WpfApplication1
 }
 static class constants
 {
-    public static string VERSION="2.1.1 pre-Alpha";
+    public static string VERSION="2.1.2 pre-Alpha";
     public static string START = "Red Stock Portal\nversion " + VERSION + "\nTo start program, enter <login> and login to your Kiwoom account";
     public static string UNCONNECTED = "You are not connected. Please login or check your connection";
+    public static string CONDITION = "";
 }
 
 
