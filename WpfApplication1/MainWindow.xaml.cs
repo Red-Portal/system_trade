@@ -156,7 +156,3 @@ static class constants
     public static string UNCONNECTED = "You are not connected. Please login or check your connection";
     public static string CONDITION = "";
 }
-
-
-
-

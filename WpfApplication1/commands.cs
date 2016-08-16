@@ -25,6 +25,7 @@ namespace WpfApplication1
             outputHandler("waiting for login");
             axKHOA.OnEventConnect += new AxKHOpenAPILib._DKHOpenAPIEvents_OnEventConnectEventHandler(eventLogin); //Trigger connection event 'eventLogin'
         }
+
         public void commandUserInfo()
         {
             if (axKHOA.GetConnectState() == 0)
@@ -32,9 +33,9 @@ namespace WpfApplication1
                 outputHandler(constants.UNCONNECTED);
                 return;
             }
-            outputHandler("User ID: " + axKHOA.GetLoginInfo("USER_ID"));
-            outputHandler("User name: " + axKHOA.GetLoginInfo("USER_NAME"));
-            outputHandler("Accounts: " + axKHOA.GetLoginInfo("ACCNO"));
+            outputHandler("User ID: " + axKHOA.GetLoginInfo("USER_ID").Trim());
+            outputHandler("User name: " + axKHOA.GetLoginInfo("USER_NAME").Trim());
+            outputHandler("Accounts: " + axKHOA.GetLoginInfo("ACCNO").Trim());
             switch (axKHOA.GetLoginInfo("KEY_BSECGB"))
             {
                 case "0":
@@ -103,11 +104,20 @@ namespace WpfApplication1
                 return;
             }
 
-
             commandStartSearch();
 
+            outputHandler("The top foreign bought product is " + gloVar.foreignTop[1, 2]);
+            outputHandler("attempting to buy " + gloVar.foreignTop[1, 2]);
 
-            //TODO: start dealing using KNN algorithm results
+            /*
+            // 현재가로 구매하기 위해 외인 매수 톱 종목의 현재가를 받는 과정임, 주문은 반환되는 이벤트 함수 내에서 이루어짐
+            axKHOA.SetInputValue("종목코드", gloVar.foreignTop[0, 1]);
+            errorCommRqData(axKHOA.CommRqData("me", "OPT10001", 0, "0101"));
+
+            this.axKHOA.OnReceiveTrData += new AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEventHandler(this.eventReceiveForeignTopPrice);
+
+
+            */
         }
         public void commandHelp()
         {
@@ -136,9 +146,9 @@ namespace WpfApplication1
                 outputHandler("Connection state: connected");
                 commandUserInfo();
             }
+            Initialize();
             return;
         }
-
         /*
         private void axKHOpenAPI_OnReceiveConditionVer(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveConditionVerEvent e)
         {
@@ -170,16 +180,34 @@ namespace WpfApplication1
 
             for (int i = 0; i < gloVar.nCount; i++)
             {
-                /*
-                outputHandler("순위:     " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "순위").Trim());
-                outputHandler("종목코드: " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "종목코드").Trim());
-                outputHandler("종목명:   " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "종목명").Trim());
-                outputHandler("현재가:   " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "현재가").Trim());
-                outputHandler("전일대비: " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "전일대비").Trim());
-                outputHandler("거래량:   " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "거래량").Trim());
-                outputHandler("순매수량: " + axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "순매수량").Trim());
-                */
-                
+                gloVar.foreignTop[i, 0] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "순위").Trim(); //순위
+                gloVar.foreignTop[i, 1] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "종목코드").Trim(); //종목코드 
+                gloVar.foreignTop[i, 2] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "종목명").Trim();  //종목명
+                gloVar.foreignTop[i, 3] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "현재가").Trim(); //현재가
+                gloVar.foreignTop[i, 4] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "전일대비").Trim();//전일대비
+                gloVar.foreignTop[i, 5] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "거래량").Trim();
+                gloVar.foreignTop[i, 6] = axKHOA.CommGetData(e.sTrCode, "", e.sRQName, i, "순매수량").Trim();//순매수량
+            }
+
+            outputHandler("Search done");
+        }
+        private void eventReceiveForeignTopPrice(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveTrDataEvent e)
+        {
+            int ret = axKHOA.SendOrder("주식주문", "0101", gloVar.accountNum, 1, gloVar.foreignTop[0, 1], 10, Int32.Parse(axKHOA.CommGetData(e.sTrCode, "", e.sRQName, 0, "현재가").Trim()), "00", "");
+        }
+        private void eventReceiveTradeResult(object sender,AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveChejanDataEvent e)
+        {
+            if(e.sGubun=="0")
+            {
+                outputHandler("/////////////////////// ORDER RESULT ///////////////////////");
+                outputHandler("/// 계좌번호: " + axKHOA.GetChejanData(9201));
+                outputHandler("/// 주문번호: " + axKHOA.GetChejanData(9203));
+                outputHandler("/// 종목코드: " + axKHOA.GetChejanData(9001));
+                outputHandler("/// 종목명: " + axKHOA.GetChejanData(302));
+                outputHandler("/// 주문수량: " + axKHOA.GetChejanData(900));
+                outputHandler("/// 주문가격: " + axKHOA.GetChejanData(901));
+                outputHandler("/// 주문액: " + (Int32.Parse(axKHOA.GetChejanData(900).Trim()) * Int32.Parse(axKHOA.GetChejanData(901).Trim())));
+                outputHandler("////////////////////////////////////////////////////////////");
             }
         }
 
@@ -187,11 +215,12 @@ namespace WpfApplication1
         public static class gloVar
         { 
             public static int nCount { get; set; }
-            public static string[,,] foreignTop = new string[nCount, 7, 15];
+            public static string[,] foreignTop = new string[nCount, 7];
+            public static string accountNum;
         };
 
 
-        //Error Handlers
+        //Error Handlers including error events
         public void errorCommRqData(int nRet)
         {
             // TODO: add error codes and stuff , can't find the error code numbers right now
@@ -199,6 +228,19 @@ namespace WpfApplication1
         private void outputHandler(string request)
         {
             dc.ConsoleOutput.Add(request);
+        }
+        private void OnReceiveMsg(object sender, AxKHOpenAPILib._DKHOpenAPIEvents_OnReceiveMsgEvent e)
+        {
+            outputHandler(e.sScrNo);
+            outputHandler(e.sRQName);
+            outputHandler(e.sTrCode);
+            outputHandler(e.sMsg);
+        }
+
+        //else
+        public void Initialize() //Stuff that must be done before searching products or dealing
+        {
+            gloVar.accountNum = axKHOA.GetLoginInfo("ACCNO").Trim();
         }
     }
 }
